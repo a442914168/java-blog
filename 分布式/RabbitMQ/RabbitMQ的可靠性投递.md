@@ -26,9 +26,11 @@
 
 二、Confirm（确认）模式：  
 
-    生产者通过调用channel.confirmSelect方法（即Confirm.Select命令）将通信设置为confirm模式。  
-    一旦消息被投递到所匹配的队列之后，RabbitMQ就会发送一个确认（Basic.Ack）给生产者（包含消息的唯一ID）
-    这就使得生产者知晓消息已正确到达了目的地了。
+```java
+生产者通过调用channel.confirmSelect方法（即Confirm.Select命令）将通信设置为confirm模式。  
+一旦消息被投递到所匹配的队列之后，RabbitMQ就会发送一个确认（Basic.Ack）给生产者（包含消息的唯一ID）
+这就使得生产者知晓消息已正确到达了目的地了。
+```
 
 
 #### 2、确保消息路由到正确的队列
@@ -44,10 +46,12 @@
 
 二、备份交换机   
 
-    使用备份交换机（alternate-exchange），无法路由的消息会发送到这个交换机上。
-    Map<String,Object> arguments = new HashMap<String,Object>();
-    arguments.put("alternate-exchange","ALTERNATE_EXCHANGE"); // 指定交换机的备份交换机
-    channel.exchangeDeclare("TEST_EXCHANGE","topic", false, false, false, arguments);
+```java
+使用备份交换机（alternate-exchange），无法路由的消息会发送到这个交换机上。
+Map<String,Object> arguments = new HashMap<String,Object>();
+arguments.put("alternate-exchange","ALTERNATE_EXCHANGE"); // 指定交换机的备份交换机
+channel.exchangeDeclare("TEST_EXCHANGE","topic", false, false, false, arguments);
+```
 
 
 
@@ -60,21 +64,27 @@
 
 一、队列持久化
 
-    // String queue, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
-    channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+```java
+// String queue, boolean durable, boolean exclusive, boolean autoDelete, Map<String, Object> arguments
+channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+```
 
 二、交换机持久化
 
-     // String exchange, boolean durable
-    channel.exchangeDeclare("MY_EXCHANGE","true");
+```java
+ // String exchange, boolean durable
+channel.exchangeDeclare("MY_EXCHANGE","true");
+```
 
 三、消息持久化
 
-     AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder() 
-            .deliveryMode(2) // 2代表持久化，其他代表瞬态
-            .build();
-            
-    channel.basicPublish("", QUEUE_NAME, properties, msg.getBytes());
+```java
+ AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder() 
+        .deliveryMode(2) // 2代表持久化，其他代表瞬态
+        .build();
+        
+channel.basicPublish("", QUEUE_NAME, properties, msg.getBytes());
+```
 
 四、集群，镜像队列
 
@@ -98,7 +108,9 @@
 #### 5、消费者回调
 消费者处理消息后，可以再发送一条消息给生产者，或者调用生产者的API，告知消息处理完毕。
 
-    例如调用支付的api，支付成功后，会收到支付状态的回调
+```java
+例如调用支付的api，支付成功后，会收到支付状态的回调
+```
 
 
 ​    
