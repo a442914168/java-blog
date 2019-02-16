@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.mybatis.EmployeeMapper">
+
+    <!--
+        namespace:名称空间;
+        id：唯一标识
+        resultType：返回值类型
+        #{id}：从传递过来的参数中取出id值
+
+        public Employee getEmpById(Integer id);
+    -->
+
+    <!--MyBatis匹配规则如下:
+        – 1、如果没有配置databaseIdProvider标签，那么databaseId=null
+        – 2、如果配置了databaseIdProvider标签，使用标签配置的name去匹 配数据库信息，匹配上设置databaseId=配置指定的值，否则依旧为 null
+        – 3、如果databaseId不为null，他只会找到配置databaseId的sql语句
+        – 4、MyBatis 会加载不带 databaseId 属性和带有匹配当前数据库 databaseId 属性的所有语句。如果同时找到带有 databaseId 和不带 databaseId 的相同语句，则后者会被舍弃。
+    -->
+    <select id="getEmpById" resultType="emp">
+		select id,last_name lastName,email,gender from tbl_employee where id = #{id}
+	</select>
+
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bobo.mybatis.dao.DepartmentMapper">
+
+    <!--/* 根据部门id查询部门信息 */-->
+    <!--Department getDeptById(Integer id);-->
+    <select id="getDeptById" resultType="dept">
+        SELECT *
+        FROM tbl_dept
+        WHERE id=#{id}
+    </select>
+
+    <!--嵌套结果集的方式，使用collection标签定义关联的集合类型的属性封装规则  -->
+    <resultMap id="getDeptAndEmpsByIdMap" type="dept">
+        <id column="did" property="deptID"/>
+        <result column="dept_name" property="deptName"/>
+        <!--
+            collection定义关联集合类型的属性的封装规则
+            ofType:指定集合里面元素的类型
+        -->
+        <collection property="emps" ofType="emp">
+            <!-- 定义这个集合中元素的封装规则 -->
+            <id column="eid" property="id"/>
+            <result column="last_name" property="lastName"/>
+            <result column="email" property="email"/>
+            <result column="gender" property="gender"/>
+        </collection>
+    </resultMap>
+
+    <!--/* 根据部门id查询部门信息，包含雇员信息 */-->
+    <!--Department getDeptAndEmpsById(Integer id);-->
+    <select id="getDeptAndEmpsById" resultMap="getDeptAndEmpsByIdMap">
+		SELECT d.id did,d.dept_name dept_name,
+				e.id eid,e.last_name last_name,e.email email,e.gender gender
+		FROM tbl_dept d
+		LEFT JOIN tbl_employee e
+		ON d.id=e.d_id
+		WHERE d.id=#{id}
+    </select>
+
+    <!-- collection：分段查询 -->
+    <resultMap id="getDeptAndEmpsByIdStepMap" type="dept">
+        <id column="did" property="deptID"/>
+        <result column="dept_name" property="deptName"/>
+        <collection property="emps"
+                    select="com.bobo.mybatis.dao.EmployeeMapperPluse.getEmpsByDeptId"
+                    column="{deptId=id}" fetchType="lazy"/>
+    </resultMap>
+
+    <!--/* 根据部门id查询部门信息，包含雇员信息，分步查询*/-->
+    <!--Department getDeptAndEmpsByIdStep(Integer id);-->
+    <select id="getDeptAndEmpsByIdStep" resultMap="getDeptAndEmpsByIdStepMap">
+        select id,dept_name
+        from tbl_dept
+        where id=#{id}
+    </select>
+
+</mapper>
